@@ -1,0 +1,16 @@
+{
+  "changed": [
+    "kern/mm/pmm.c"
+  ],
+  "new": [
+    "kern/mm/buddy_pmm.c",
+    "kern/mm/buddy_pmm.h"
+  ],
+  "all_other_original_sources_unchanged": true,
+  "pmm_c_only_include_and_manager_selection_changed": true,
+  "sha256": {
+    "kern/mm/pmm.c": "33e628051e6b473f9025ef704b782b1bcbd63f07cb20b21eb56df8e289bcc80b",
+    "kern/mm/buddy_pmm.c": "360d35c1edba133aed6b71288169fd38e75a4c063195b1f00581d93e851e74e9",
+    "kern/mm/buddy_pmm.h": "6daf5ff3d6b9b767fcfdcda72d157b33ab255acd4a300b898965a6627745c854"
+  }
+}

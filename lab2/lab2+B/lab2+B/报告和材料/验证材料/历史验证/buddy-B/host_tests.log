@@ -1,0 +1,16 @@
+HOST: 2080 alignment/tail cases passed
+buddy_check: invalid requests passed
+buddy_check: rounded allocations and unordered frees passed
+buddy_check: splitting, unique pages and exhaustion passed
+buddy_check: fragmentation failure leaves state unchanged
+buddy_check: multilevel coalescing restored all 107 pages
+buddy_check() succeeded!
+HOST: adjacent maps, holes and last descriptor passed
+buddy_check: invalid requests passed
+buddy_check: rounded allocations and unordered frees passed
+buddy_check: splitting, unique pages and exhaustion passed
+buddy_check: fragmentation failure leaves state unchanged
+buddy_check: multilevel coalescing restored all 333 pages
+buddy_check() succeeded!
+HOST: 20000 randomized operations passed
+HOST: all valid-operation tests passed

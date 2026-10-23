@@ -1,0 +1,1 @@
+PANIC lab2_source/lab2_new/kern/mm/buddy_pmm.c:184: assertion failed: base->property == n

@@ -1,0 +1,18 @@
+{
+  "changed": [
+    "kern/init/init.c",
+    "kern/mm/pmm.h"
+  ],
+  "new": [
+    "kern/mm/slub.c",
+    "kern/mm/slub.h"
+  ],
+  "all_other_original_files_unchanged": true,
+  "buddy_and_A_implementation_and_Page_layout_and_original_grader_unchanged": true,
+  "sha256": {
+    "kern/init/init.c": "724d8ac67e769636384599170edc7004238eebed61835ecd2db98510bf62e9e0",
+    "kern/mm/pmm.h": "df4fd591c49b2de2440999c15c9aead1ba1680dea087fbdb540aa0f7614eb88f",
+    "kern/mm/slub.c": "4fd907b7e9593bd31ac9be63dcfbe3b85ea308f75f9146529cbcc8640f210454",
+    "kern/mm/slub.h": "3f1a1ed78a7cee664ab17d304f55aad961aa4481c77ad500f00939bb2e48366d"
+  }
+}

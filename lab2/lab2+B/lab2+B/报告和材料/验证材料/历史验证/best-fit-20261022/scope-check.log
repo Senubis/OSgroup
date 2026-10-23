@@ -1,0 +1,13 @@
+{
+  "maintained_files_checked": 39,
+  "changed": [
+    "kern/mm/best_fit_pmm.c",
+    "kern/mm/pmm.c"
+  ],
+  "original_basic_and_best_fit_checks_unchanged": true,
+  "pmm_only_manager_selection_changed": true,
+  "page_init_and_boot_fixes_and_public_headers_unchanged": true
+}
+122	0	kern/mm/best_fit_pmm.c
+1	1	kern/mm/pmm.c
+

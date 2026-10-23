@@ -1,0 +1,2 @@
+6	4	kern/init/entry.S
+3	3	Makefile

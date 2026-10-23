@@ -1,0 +1,60 @@
++ qemu-system-riscv64 -machine virt -nographic -bios default -kernel bin/ucore.img -S -gdb tcp:127.0.0.1:12349
++ qemu_pid=444
++ trap 'kill "$qemu_pid" 2>/dev/null; wait "$qemu_pid" 2>/dev/null' EXIT
++ timeout 45s gdb-multiarch -q -batch -x /mnt/e/os-labs/lab2/verification/page-init-20261022/boot.gdb
+The target architecture is set to "riscv:rv64".
+warning: No executable has been specified and target does not support
+determining executable automatically.  Try using the "file" command.
+0x0000000000001000 in ?? ()
+Hardware assisted breakpoint 1 at 0x80200000
+
+Breakpoint 1, 0x0000000080200000 in ?? ()
+
+--- physical kernel entry ---
+pc             0x80200000	0x80200000
+a0             0x0	0
+a1             0x87e00000	2279604224
+=> 0x80200000:	auipc	t0,0x6
+   0x80200004:	mv	t0,t0
+   0x80200008:	sd	a0,0(t0)
+   0x8020000c:	auipc	t0,0x6
+   0x80200010:	addi	t0,t0,-4
+   0x80200014:	sd	a1,0(t0)
+   0x80200018:	lui	t0,0xc0205
+   0x8020001c:	addiw	t1,zero,-3
+   0x80200020:	slli	t1,t1,0x1e
+   0x80200022:	sub	t0,t0,t1
+   0x80200026:	srli	t0,t0,0xc
+   0x8020002a:	addiw	t1,zero,-1
+   0x8020002e:	slli	t1,t1,0x3f
+   0x80200030:	or	t0,t0,t1
+   0x80200034:	csrw	satp,t0
+   0x80200038:	sfence.vma
+   0x8020003c:	lui	sp,0xc0205
+   0x80200040:	lui	t0,0xc0200
+   0x80200044:	addi	t0,t0,214
+   0x80200048:	jr	t0
+Hardware assisted breakpoint 2 at 0x80200034
+
+Breakpoint 2, 0x0000000080200034 in ?? ()
+
+--- before enabling satp ---
+pc             0x80200034	0x80200034
+t0             0x8000000000080205	-9223372036854251003
+satp           0x0	0
+stvec          0x80200000	2149580800
+0x80205000:	0x0000000000000000	0x0000000000000000
+0x80205010:	0x0000000000000000	0x0000000000000000
+0x80205ff8:	0x00000000200000cf
+0x0000000080200038 in ?? ()
+
+--- immediately after satp ---
+pc             0x80200038	0x80200038
+satp           0x8000000000080205	-9223372036854251003
+/mnt/e/os-labs/lab2/verification/page-init-20261022/boot.gdb:21: Error in sourced command file:
+Cannot access memory at address 0x80200038
+[Inferior 1 (process 1) detached]
++ echo gdb_status=1
+gdb_status=1
++ kill 444
++ wait 444

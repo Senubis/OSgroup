@@ -1,0 +1,151 @@
+[
+  {
+    "name": "default_clean",
+    "command": [
+      "make",
+      "clean"
+    ],
+    "exit_code": 0,
+    "timed_out": false,
+    "passed": true,
+    "kernel_entered": null,
+    "assertions": "not_checked",
+    "seconds": 0.33
+  },
+  {
+    "name": "default_build",
+    "command": [
+      "make",
+      "-j2"
+    ],
+    "exit_code": 0,
+    "timed_out": false,
+    "passed": true,
+    "kernel_entered": null,
+    "assertions": "not_checked",
+    "seconds": 20.71
+  },
+  {
+    "name": "default_grade_raw",
+    "command": [
+      "make",
+      "grade"
+    ],
+    "exit_code": 2,
+    "timed_out": false,
+    "passed": false,
+    "kernel_entered": false,
+    "assertions": "not_executed",
+    "seconds": 3.32
+  },
+  {
+    "name": "default_grade_compatible",
+    "command": [
+      "make",
+      "grade",
+      "QEMU=/mnt/c/Users/HP/Documents/Codex/2026-10-22/qin/work/qemu_grade_compat.py"
+    ],
+    "exit_code": 0,
+    "timed_out": false,
+    "passed": true,
+    "kernel_entered": true,
+    "assertions": "passed_via_original_grader",
+    "seconds": 3.25
+  },
+  {
+    "name": "buddy_clean",
+    "command": [
+      "make",
+      "clean"
+    ],
+    "exit_code": 0,
+    "timed_out": false,
+    "passed": true,
+    "kernel_entered": null,
+    "assertions": "not_checked",
+    "seconds": 0.19
+  },
+  {
+    "name": "buddy_build",
+    "command": [
+      "make",
+      "-j2",
+      "DEFS=-DUSE_BUDDY"
+    ],
+    "exit_code": 0,
+    "timed_out": false,
+    "passed": true,
+    "kernel_entered": null,
+    "assertions": "not_checked",
+    "seconds": 22.78
+  },
+  {
+    "name": "buddy_boot",
+    "command": [
+      "make",
+      "qemu",
+      "DEFS=-DUSE_BUDDY"
+    ],
+    "exit_code": null,
+    "timed_out": true,
+    "passed": true,
+    "kernel_entered": true,
+    "assertions": "passed",
+    "seconds": 12.02
+  },
+  {
+    "name": "slub_clean",
+    "command": [
+      "make",
+      "clean"
+    ],
+    "exit_code": 0,
+    "timed_out": false,
+    "passed": true,
+    "kernel_entered": null,
+    "assertions": "not_checked",
+    "seconds": 0.33
+  },
+  {
+    "name": "slub_build",
+    "command": [
+      "make",
+      "-j2",
+      "DEFS=-DUSE_BUDDY -DUSE_SLUB"
+    ],
+    "exit_code": 0,
+    "timed_out": false,
+    "passed": true,
+    "kernel_entered": null,
+    "assertions": "not_checked",
+    "seconds": 21.52
+  },
+  {
+    "name": "slub_boot",
+    "command": [
+      "make",
+      "qemu",
+      "DEFS=-DUSE_BUDDY -DUSE_SLUB"
+    ],
+    "exit_code": null,
+    "timed_out": true,
+    "passed": true,
+    "kernel_entered": true,
+    "assertions": "passed",
+    "seconds": 12.02
+  },
+  {
+    "name": "toolchain_versions",
+    "command": [
+      "sh",
+      "-c",
+      "riscv64-unknown-elf-gcc --version; qemu-system-riscv64 --version; uname -a"
+    ],
+    "exit_code": 0,
+    "timed_out": false,
+    "passed": true,
+    "kernel_entered": null,
+    "assertions": "not_checked",
+    "seconds": 0.05
+  }
+]

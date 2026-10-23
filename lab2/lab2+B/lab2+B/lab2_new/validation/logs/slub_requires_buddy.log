@@ -1,0 +1,15 @@
+In file included from kern/init/init.c:5:
+libs/string.h:15:7: warning: conflicting types for built-in function 'strchr'; expected 'char *(const char *, int)' [-Wbuiltin-declaration-mismatch]
+   15 | char *strchr(const char *s, char c);
+      |       ^~~~~~
+libs/string.h:1:1: note: 'strchr' is declared in header '<string.h>'
+  +++ |+#include <string.h>
+    1 | #ifndef __LIBS_STRING_H__
+libs/string.h:19:7: warning: conflicting types for built-in function 'memset'; expected 'void *(void *, int,  long unsigned int)' [-Wbuiltin-declaration-mismatch]
+   19 | void *memset(void *s, char c, size_t n);
+      |       ^~~~~~
+libs/string.h:19:7: note: 'memset' is declared in header '<string.h>'
+In file included from kern/init/init.c:8:
+kern/mm/slub.h:7:2: error: #error "USE_SLUB requires USE_BUDDY"
+    7 | #error "USE_SLUB requires USE_BUDDY"
+      |  ^~~~~

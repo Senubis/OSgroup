@@ -1,0 +1,45 @@
++ qemu-system-riscv64 -machine virt -nographic -bios default -kernel bin/ucore.img -S -gdb tcp:127.0.0.1:12349
++ qemu_pid=478
++ trap 'kill "$qemu_pid" 2>/dev/null; wait "$qemu_pid" 2>/dev/null' EXIT
++ timeout 45s gdb-multiarch -q -batch -x /mnt/e/os-labs/lab2/verification/page-init-20261022/after-boot.gdb
+The target architecture is set to "riscv:rv64".
+0x0000000000001000 in ?? ()
+Hardware assisted breakpoint 1 at 0x80200034
+
+Breakpoint 1, 0x0000000080200034 in ?? ()
+
+--- identity entry before satp ---
+0x80205010:	0x00000000200000cf
+0x0000000080200038 in ?? ()
+
+--- instruction fetch after satp works ---
+pc             0x80200038	0x80200038
+satp           0x8000000000080205	-9223372036854251003
+=> 0x80200038:	sfence.vma
+0x000000008020003c in ?? ()
+pc             0x8020003c	0x8020003c
+Hardware assisted breakpoint 2 at 0xffffffffc02000d6: file kern/init/init.c, line 30.
+
+Breakpoint 2, kern_init () at kern/init/init.c:30
+30	    memset(edata, 0, end - edata);
+
+--- high virtual entry reached ---
+pc             0xffffffffc02000d6	0xffffffffc02000d6 <kern_init>
+sp             0xffffffffc0205000	0xffffffffc0205000
+satp           0x8000000000080205	-9223372036854251003
+[Inferior 1 (process 1) detached]
++ gdb_status=0
++ echo gdb_status=0
+gdb_status=0
++ kill 478
++ wait 478
++ trap - EXIT
++ test 0 = 0
++ timeout 8s qemu-system-riscv64 -machine virt -nographic -bios default -device loader,file=bin/ucore.img,addr=0x80200000
++ echo old_loader_status=124
+old_loader_status=124
++ grep -F 'Domain0 Next Address' /mnt/e/os-labs/lab2/verification/page-init-20261022/after-old-loader.log
+Domain0 Next Address        : 0x0000000000000000
++ grep -q 'DTB Init' /mnt/e/os-labs/lab2/verification/page-init-20261022/after-old-loader.log
++ echo 'Old loader still does not enter kernel; -kernel is required in this environment.'
+Old loader still does not enter kernel; -kernel is required in this environment.

@@ -1,0 +1,7 @@
+{
+  "changed": [
+    "kern/mm/slub.c"
+  ],
+  "allocator_logic_and_Buddy_and_original_grader_unchanged": true,
+  "sha256_after": "27e69ec2a6e4b6ece7136ac771a49d35f1579ec8af160ac4b1ea13ebf0bcddbd"
+}

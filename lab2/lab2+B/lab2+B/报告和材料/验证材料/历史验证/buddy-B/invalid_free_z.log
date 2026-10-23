@@ -1,0 +1,1 @@
+PANIC lab2_source/lab2_new/kern/mm/buddy_pmm.c:179: assertion failed: buddy_request_order(n, &order)

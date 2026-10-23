@@ -1,0 +1,1 @@
+PANIC lab2_source/lab2_new/kern/mm/slub.c:170: assertion failed: offset % block->capacity == 0

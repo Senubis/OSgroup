@@ -1,0 +1,137 @@
+[
+  {
+    "name": "default_clean",
+    "command": [
+      "make",
+      "clean"
+    ],
+    "passed": true,
+    "exit_code": 0,
+    "timed_out": false,
+    "seconds": 0.14
+  },
+  {
+    "name": "default_build",
+    "command": [
+      "make",
+      "-j2"
+    ],
+    "passed": true,
+    "exit_code": 0,
+    "timed_out": false,
+    "seconds": 19.66
+  },
+  {
+    "name": "default_boot",
+    "command": [
+      "make",
+      "qemu"
+    ],
+    "passed": true,
+    "exit_code": null,
+    "timed_out": true,
+    "seconds": 12.02
+  },
+  {
+    "name": "default_grade_compatible",
+    "command": [
+      "make",
+      "grade",
+      "QEMU=/mnt/c/Users/HP/Documents/Codex/2026-10-22/qin/work/qemu_grade_compat.py"
+    ],
+    "passed": true,
+    "exit_code": 0,
+    "timed_out": false,
+    "seconds": 3.16
+  },
+  {
+    "name": "buddy_clean",
+    "command": [
+      "make",
+      "clean"
+    ],
+    "passed": true,
+    "exit_code": 0,
+    "timed_out": false,
+    "seconds": 0.18
+  },
+  {
+    "name": "buddy_build",
+    "command": [
+      "make",
+      "-j2",
+      "DEFS=-DUSE_BUDDY"
+    ],
+    "passed": true,
+    "exit_code": 0,
+    "timed_out": false,
+    "seconds": 18.43
+  },
+  {
+    "name": "buddy_boot",
+    "command": [
+      "make",
+      "qemu",
+      "DEFS=-DUSE_BUDDY"
+    ],
+    "passed": true,
+    "exit_code": null,
+    "timed_out": true,
+    "seconds": 12.03
+  },
+  {
+    "name": "slub_clean",
+    "command": [
+      "make",
+      "clean"
+    ],
+    "passed": true,
+    "exit_code": 0,
+    "timed_out": false,
+    "seconds": 0.38
+  },
+  {
+    "name": "slub_build",
+    "command": [
+      "make",
+      "-j2",
+      "DEFS=-DUSE_BUDDY -DUSE_SLUB"
+    ],
+    "passed": true,
+    "exit_code": 0,
+    "timed_out": false,
+    "seconds": 17.64
+  },
+  {
+    "name": "slub_boot",
+    "command": [
+      "make",
+      "qemu",
+      "DEFS=-DUSE_BUDDY -DUSE_SLUB"
+    ],
+    "passed": true,
+    "exit_code": null,
+    "timed_out": true,
+    "seconds": 12.02
+  },
+  {
+    "name": "slub_requires_buddy",
+    "command": [
+      "riscv64-unknown-elf-gcc",
+      "-mcmodel=medany",
+      "-std=gnu99",
+      "-nostdinc",
+      "-Ilibs",
+      "-Ikern/mm",
+      "-Ikern/debug",
+      "-Ikern/driver",
+      "-DUSE_SLUB",
+      "-fsyntax-only",
+      "kern/init/init.c"
+    ],
+    "passed": true,
+    "exit_code": 1,
+    "timed_out": false,
+    "seconds": 0.29
+  }
+]

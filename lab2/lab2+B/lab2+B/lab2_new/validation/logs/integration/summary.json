@@ -1,0 +1,18 @@
+{
+  "source_changed": [
+    "kern/mm/slub.c"
+  ],
+  "allocator_implementation_unchanged": true,
+  "Buddy_self_check_and_original_grader_unchanged": true,
+  "slub_check_stages": 7,
+  "free_pages_before": 31926,
+  "free_pages_after": 31926,
+  "header_bytes": 96,
+  "fixed_object_records": 64,
+  "host_compile_exit": 0,
+  "host_run_exit": 0,
+  "host_ASan_UBSan_errors": false,
+  "host_random_operations": 12000,
+  "host_freed_pages_PROT_NONE": true,
+  "sha256": "27e69ec2a6e4b6ece7136ac771a49d35f1579ec8af160ac4b1ea13ebf0bcddbd"
+}

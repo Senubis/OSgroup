@@ -1,0 +1,32 @@
+{
+  "owner": "2413015-孙若晴",
+  "AI_tool_and_model_user_confirmed": "Codex / GPT-6.1 Sol",
+  "source_sha256_before": "f1071be57885c0494f7a1939b7e2b45216abec8d9032567daaf2eecde908724c",
+  "source_sha256_after": "f1071be57885c0494f7a1939b7e2b45216abec8d9032567daaf2eecde908724c",
+  "source_attachment_unchanged": true,
+  "protected_sections_exactly_preserved": [
+    "实验基本信息（含原完成日期空白）",
+    "A全部实验内容（初始化、Challenge、First-Fit、Best-Fit）",
+    "A全部测试记录及截图占位",
+    "C完整待填章节",
+    "A知识点表格",
+    "A已有未覆盖原理与统一补充占位",
+    "A已有AI经验与个人收获占位"
+  ],
+  "edits": [
+    "填写 B 分工；保留 A 行及 C 空白行",
+    "按用户确认填写 B 工具和模型",
+    "填入整体逻辑中的 B 占位项",
+    "补全 Buddy 原空白章节",
+    "补全 SLUB 原空白章节",
+    "填入 B 后续集成记录，不修改 A 阶段结论",
+    "分别填写原命令失败与适配对照；如实注明未采集截图",
+    "在 A 原证据后追加 B 证据，原引用不变",
+    "在知识点占位项补 B 内容，保留 A 表格",
+    "补充 B 个人 AI 协作经验，不改 A 个人段落"
+  ],
+  "screenshots_not_fabricated": true,
+  "Buddy_test_prompt_status": "前期独立设计稿；未冒称一次单独发送后的代码修改迭代",
+  "new_experiments_run_for_report_task": false,
+  "evidence_files": 79
+}

@@ -1,0 +1,8 @@
+slub_check: conversions, zero and overflow requests passed
+slub_check: all classes, alignment, non-overlap and data passed
+slub_check: multiple slabs, reuse and immediate reclaim passed
+slub_check: large object returned complete rounded block
+slub_check: exhaustion, rollback and live data preservation passed
+slub_check() succeeded! restored 512 free pages
+HOST: 12000 random SLUB operations passed (0 allocation failures)
+HOST: no access to PROT_NONE freed pages; all pages restored

@@ -1,0 +1,19 @@
+{
+  "kern/init/entry.S": {
+    "unchanged": false,
+    "before_sha256": "0f32d455dd8dcaa99987eb2eafd64df5e7535e14477ed2aece8e599e3b911111",
+    "after_sha256": "0310f22c0177eed04c4d560dc4434aa58a7d456ec20c1f4eb6159560dba88c58"
+  },
+  "Makefile": {
+    "unchanged": false,
+    "before_sha256": "7e08d809582b5600eef924d4eb5d2f405b8cfd168a40804b32961aea6871e89f",
+    "after_sha256": "b9ca40eb2c7195d40d24424c36ae716a66f6828427878d1383221ca97a1620ac"
+  },
+  "kern/mm/pmm.c": {
+    "unchanged": true,
+    "before_sha256": "d6fee6a4377435b370050c1407da8e9c6a4738a520d68652a137f3fa3181c82f",
+    "after_sha256": "d6fee6a4377435b370050c1407da8e9c6a4738a520d68652a137f3fa3181c82f"
+  },
+  "original_test_copied_verbatim": true,
+  "maintained_files_match_test_tree_except_instrumented_pmm": true
+}

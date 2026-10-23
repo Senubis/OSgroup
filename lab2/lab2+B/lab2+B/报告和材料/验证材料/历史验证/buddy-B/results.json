@@ -1,0 +1,86 @@
+[
+  {
+    "name": "default_clean",
+    "command": [
+      "make",
+      "clean"
+    ],
+    "exit_code": 0,
+    "timed_out": false,
+    "passed": true,
+    "seconds": 0.39
+  },
+  {
+    "name": "default_build",
+    "command": [
+      "make",
+      "-j2"
+    ],
+    "exit_code": 0,
+    "timed_out": false,
+    "passed": true,
+    "seconds": 14.64
+  },
+  {
+    "name": "default_boot",
+    "command": [
+      "make",
+      "qemu"
+    ],
+    "exit_code": null,
+    "timed_out": true,
+    "passed": true,
+    "seconds": 8.03
+  },
+  {
+    "name": "default_grade",
+    "command": [
+      "make",
+      "grade"
+    ],
+    "exit_code": 2,
+    "timed_out": false,
+    "passed": false,
+    "seconds": 2.99
+  },
+  {
+    "name": "buddy_boot",
+    "command": [
+      "make",
+      "qemu",
+      "DEFS=-DUSE_BUDDY"
+    ],
+    "exit_code": null,
+    "timed_out": true,
+    "passed": true,
+    "seconds": 12.05
+  },
+  {
+    "name": "loader_diagnostic",
+    "command": [
+      "qemu-system-riscv64",
+      "-machine",
+      "virt",
+      "-nographic",
+      "-bios",
+      "default",
+      "-device",
+      "loader,file=bin/ucore.img,addr=0x80200000"
+    ],
+    "exit_code": null,
+    "timed_out": true,
+    "passed": false,
+    "seconds": 8.05
+  },
+  {
+    "name": "original_baseline_grade",
+    "command": [
+      "make",
+      "grade"
+    ],
+    "exit_code": 2,
+    "timed_out": false,
+    "passed": false,
+    "seconds": 3.04
+  }
+]

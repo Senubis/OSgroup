@@ -1,0 +1,7 @@
+{
+  "asan_ubsan_valid_operations_exit_code": 0,
+  "randomized_operations": 12000,
+  "protected_freed_pages": true,
+  "address_conversions_stubbed_in_allocator_host_test": true,
+  "separate_actual_pmm_h_conversion_tests": true
+}

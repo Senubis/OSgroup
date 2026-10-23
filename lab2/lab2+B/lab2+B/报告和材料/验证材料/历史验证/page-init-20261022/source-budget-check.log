@@ -1,0 +1,13 @@
+Patch Scope Summary
+- Budget preset: local-fix
+- Budget: max 2 file(s), max 80 known changed line(s)
+- Files changed: 2
+- Known lines changed: 16 (+9/-7)
+- Unknown-line files: 0
+- Untracked files included: 0
+- Coverage: supplied numstat snapshot only; tracked status and omitted files are unknowable
+Paths
+- kern/init/entry.S (+6/-4) [snapshot]
+- Makefile (+3/-3) [snapshot]
+Warnings
+- none

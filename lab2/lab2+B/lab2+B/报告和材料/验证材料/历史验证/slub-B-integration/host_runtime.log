@@ -1,0 +1,11 @@
+slub_check: begin free=512 header=96 records=64
+[SLUB T01] PASS zero, NULL and page-address round trips
+[SLUB T02] PASS boundaries, full data, alignment, non-overlap, overflow
+[SLUB T03] PASS immediate empty-page reclaim for all 8 classes
+[SLUB T04] PASS cross-page slots, exact reuse, partial slab reclaim, shuffle
+[SLUB T05] PASS metadata-aware large-page costs and complete shuffled frees
+[SLUB T06] PASS bounded exhaustion, failed new/full/large allocations, live data
+[SLUB T07] PASS empty cache links and two rounds of later allocations
+slub_check() succeeded! stages=7 restored 512 free pages
+HOST: 12000 random SLUB operations passed (0 allocation failures)
+HOST: no access to PROT_NONE freed pages; all pages restored

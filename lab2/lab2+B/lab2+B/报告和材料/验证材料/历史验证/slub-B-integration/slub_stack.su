@@ -1,0 +1,13 @@
+kern/mm/slub.c:275:1:slub_test_pattern	16	static
+kern/mm/slub.c:202:1:slub_validate	128	static
+kern/mm/slub.c:323:1:slub_test_clean	16	static
+kern/mm/slub.c:82:1:slub_init	32	static
+kern/mm/slub.c:99:1:kmalloc	64	static
+kern/mm/slub.c:289:1:slub_test_add	48	static
+kern/mm/slub.c:336:1:slub_test_failed_requests	112	static
+kern/mm/slub.c:152:1:kfree	16	static
+kern/mm/slub.c:357:1:slub_test_boundaries	1872	static
+kern/mm/slub.c:542:1:slub_test_after_cleanup	1648	static
+kern/mm/slub.c:455:1:slub_test_large_objects	1696	static
+kern/mm/slub.c:396:1:slub_test_cross_page	1648	static
+kern/mm/slub.c:564:1:slub_check	208	static

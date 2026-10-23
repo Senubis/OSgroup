@@ -1,0 +1,1 @@
+PANIC lab2_source/lab2_new/kern/mm/slub.c:198: SLUB: invalid or already freed pointer 000074a1d5804060

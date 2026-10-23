@@ -1,0 +1,32 @@
+[
+  {
+    "case": "n",
+    "exit_code": 73,
+    "passed": true
+  },
+  {
+    "case": "p",
+    "exit_code": 73,
+    "passed": true
+  },
+  {
+    "case": "d",
+    "exit_code": 73,
+    "passed": true
+  },
+  {
+    "case": "r",
+    "exit_code": 73,
+    "passed": true
+  },
+  {
+    "case": "z",
+    "exit_code": 73,
+    "passed": true
+  },
+  {
+    "case": "b",
+    "exit_code": 73,
+    "passed": true
+  }
+]

@@ -1,0 +1,117 @@
+[
+  {
+    "name": "invalid_free_s",
+    "exit_code": 73,
+    "passed": true
+  },
+  {
+    "name": "invalid_free_d",
+    "exit_code": 73,
+    "passed": true
+  },
+  {
+    "name": "invalid_free_f",
+    "exit_code": 73,
+    "passed": true
+  },
+  {
+    "name": "invalid_free_l",
+    "exit_code": 73,
+    "passed": true
+  },
+  {
+    "name": "invalid_free_b",
+    "exit_code": 73,
+    "passed": true
+  },
+  {
+    "name": "invalid_free_i",
+    "exit_code": 73,
+    "passed": true
+  },
+  {
+    "name": "conversion_valid",
+    "exit_code": 0,
+    "passed": true
+  },
+  {
+    "name": "conversion_invalid_00",
+    "exit_code": 73,
+    "passed": true
+  },
+  {
+    "name": "conversion_invalid_01",
+    "exit_code": 73,
+    "passed": true
+  },
+  {
+    "name": "conversion_invalid_02",
+    "exit_code": 73,
+    "passed": true
+  },
+  {
+    "name": "conversion_invalid_03",
+    "exit_code": 73,
+    "passed": true
+  },
+  {
+    "name": "conversion_invalid_04",
+    "exit_code": 73,
+    "passed": true
+  },
+  {
+    "name": "conversion_invalid_05",
+    "exit_code": 73,
+    "passed": true
+  },
+  {
+    "name": "conversion_invalid_06",
+    "exit_code": 73,
+    "passed": true
+  },
+  {
+    "name": "conversion_invalid_07",
+    "exit_code": 73,
+    "passed": true
+  },
+  {
+    "name": "conversion_invalid_08",
+    "exit_code": 73,
+    "passed": true
+  },
+  {
+    "name": "conversion_invalid_09",
+    "exit_code": 73,
+    "passed": true
+  },
+  {
+    "name": "conversion_invalid_10",
+    "exit_code": 73,
+    "passed": true
+  },
+  {
+    "name": "conversion_invalid_11",
+    "exit_code": 73,
+    "passed": true
+  },
+  {
+    "name": "conversion_invalid_12",
+    "exit_code": 73,
+    "passed": true
+  },
+  {
+    "name": "conversion_invalid_13",
+    "exit_code": 73,
+    "passed": true
+  },
+  {
+    "name": "conversion_invalid_14",
+    "exit_code": 73,
+    "passed": true
+  },
+  {
+    "name": "conversion_invalid_15",
+    "exit_code": 73,
+    "passed": true
+  }
+]

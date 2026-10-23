@@ -1,0 +1,30 @@
++ date -Iseconds
+2026-10-22T20:36:13+08:00
++ riscv64-unknown-elf-gcc --version
+riscv64-unknown-elf-gcc (14.2.0+19) 14.2.0
+Copyright (C) 2024 Free Software Foundation, Inc.
+This is free software; see the source for copying conditions.  There is NO
+warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
++ qemu-system-riscv64 --version
+QEMU emulator version 10.2.1 (Debian 1:10.2.1+ds-1ubuntu3.2)
+Copyright (c) 2003-2025 Fabrice Bellard and the QEMU Project developers
++ make -j2
++ cc kern/mm/best_fit_pmm.c
+kern/mm/best_fit_pmm.c: In function 'basic_check':
+kern/mm/best_fit_pmm.c:24:36: error: 'free_list' undeclared (first use in this function)
+   24 |     list_entry_t free_list_store = free_list;
+      |                                    ^~~~~~~~~
+kern/mm/best_fit_pmm.c:24:36: note: each undeclared identifier is reported only once for each function it appears in
+kern/mm/best_fit_pmm.c:28:34: error: 'nr_free' undeclared (first use in this function)
+   28 |     unsigned int nr_free_store = nr_free;
+      |                                  ^~~~~~~
+kern/mm/best_fit_pmm.c: In function 'best_fit_check':
+kern/mm/best_fit_pmm.c:64:25: error: 'free_list' undeclared (first use in this function)
+   64 |     list_entry_t *le = &free_list;
+      |                         ^~~~~~~~~
+kern/mm/best_fit_pmm.c:95:34: error: 'nr_free' undeclared (first use in this function)
+   95 |     unsigned int nr_free_store = nr_free;
+      |                                  ^~~~~~~
+make: *** [Makefile:116: obj/kern/mm/best_fit_pmm.o] Error 1
++ echo baseline_make_status=2

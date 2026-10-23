@@ -1,0 +1,54 @@
+--- before/kern/init/entry.S
++++ kern/init/entry.S
+@@ -29,8 +29,7 @@
+     csrw    satp, t0
+     # 使用 sfence.vma 指令刷新 TLB
+     sfence.vma
+-    # 从此，我们给内核搭建出了一个完美的虚拟内存空间！
+-    #nop # 可能映射的位置有些bug。。插入一个nop
++    # The identity mapping below keeps instruction fetch valid until the high jump.
+     
+     # 我们在虚拟内存空间中：随意将 sp 设置为虚拟地址！
+     lui sp, %hi(bootstacktop)
+@@ -57,8 +56,11 @@
+ # 分配 4KiB 内存给预设的三级页表
+ boot_page_table_sv39:
+     # 0xffffffff_c0000000 map to 0x80000000 (1G)
+-    # 前 511 个页表项均设置为 0 ，因此 V=0 ，意味着是空的(unmapped)
+-    .zero 8 * 511
++    # Keep 0x80000000..0xbfffffff identity-mapped during the satp transition.
++    # The CPU still fetches at a low address before jumping to kern_init.
++    .zero 8 * 2
++    .quad (0x80000 << 10) | 0xcf # root entry 2: identity mapping
++    .zero 8 * 508
+     # 设置最后一个页表项，PPN=0x80000，标志位 VRWXAD 均为 1
+     .quad (0x80000 << 10) | 0xcf # VRWXAD
+ 
+--- before/Makefile
++++ Makefile
+@@ -165,14 +165,14 @@
+ 		-machine virt \
+ 		-nographic \
+ 		-bios default \
+-		-device loader,file=$(UCOREIMG),addr=0x80200000
++		-kernel $(UCOREIMG)
+ 
+ debug: $(UCOREIMG) $(SWAPIMG) $(SFSIMG)
+ 	$(V)$(QEMU) \
+ 		-machine virt \
+ 		-nographic \
+ 		-bios default \
+-		-device loader,file=$(UCOREIMG),addr=0x80200000\
++		-kernel $(UCOREIMG)\
+ 		-s -S
+ 
+ gdb:
+@@ -186,7 +186,7 @@
+ 		-machine virt \
+ 		-nographic \
+ 		-bios default \
+-		-device loader,file=$(UCOREIMG),addr=0x80200000
++		-kernel $(UCOREIMG)
+ spike: $(UCOREIMG) $(SWAPIMG) $(SFSIMG)
+ 	$(V)$(SPIKE) $(UCOREIMG)
+ 
