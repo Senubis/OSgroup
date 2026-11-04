@@ -1,0 +1,116 @@
+[
+  {
+    "label": "direct",
+    "command": [
+      "python3",
+      "/mnt/e/os-labs/lab3/verification/c-exception/team-integration-20261104/check_direct.py"
+    ],
+    "cwd": "/mnt/e/os-labs/lab3/verification/c-exception/team-integration-20261104",
+    "returncode": 0
+  },
+  {
+    "label": "unadapted-build",
+    "command": [
+      "make"
+    ],
+    "cwd": "/mnt/e/os-labs/lab3/verification/c-exception/team-integration-20261104/unadapted",
+    "returncode": 2
+  },
+  {
+    "label": "alias-build",
+    "command": [
+      "make",
+      "DEFS+=-Dsbadaddr=stval"
+    ],
+    "cwd": "/mnt/e/os-labs/lab3/verification/c-exception/team-integration-20261104/unadapted",
+    "returncode": 2
+  },
+  {
+    "label": "context-inject",
+    "command": [
+      "python3",
+      "/mnt/e/os-labs/lab3/verification/c-exception/team-integration-20261104/context/tools/inject.py",
+      "/mnt/e/os-labs/lab3/verification/c-exception/team-integration-20261104/context"
+    ],
+    "cwd": "/mnt/e/os-labs/lab3/verification/c-exception/team-integration-20261104/context",
+    "returncode": 0
+  },
+  {
+    "label": "context-build",
+    "command": [
+      "make",
+      "DEFS+=-Dsbadaddr=stval -DGRADE_LAB3_CONTEXT"
+    ],
+    "cwd": "/mnt/e/os-labs/lab3/verification/c-exception/team-integration-20261104/context",
+    "returncode": 0
+  },
+  {
+    "label": "illegal-inject",
+    "command": [
+      "python3",
+      "/mnt/e/os-labs/lab3/verification/c-exception/team-integration-20261104/illegal/tools/inject.py",
+      "/mnt/e/os-labs/lab3/verification/c-exception/team-integration-20261104/illegal"
+    ],
+    "cwd": "/mnt/e/os-labs/lab3/verification/c-exception/team-integration-20261104/illegal",
+    "returncode": 0
+  },
+  {
+    "label": "illegal-build",
+    "command": [
+      "make",
+      "DEFS+=-Dsbadaddr=stval -DGRADE_LAB3_ILLEGAL"
+    ],
+    "cwd": "/mnt/e/os-labs/lab3/verification/c-exception/team-integration-20261104/illegal",
+    "returncode": 0
+  },
+  {
+    "label": "extra-inject",
+    "command": [
+      "python3",
+      "/mnt/e/os-labs/lab3/verification/c-exception/team-integration-20261104/extra/tools/inject.py",
+      "/mnt/e/os-labs/lab3/verification/c-exception/team-integration-20261104/extra"
+    ],
+    "cwd": "/mnt/e/os-labs/lab3/verification/c-exception/team-integration-20261104/extra",
+    "returncode": 0
+  },
+  {
+    "label": "extra-build",
+    "command": [
+      "make",
+      "DEFS+=-Dsbadaddr=stval"
+    ],
+    "cwd": "/mnt/e/os-labs/lab3/verification/c-exception/team-integration-20261104/extra",
+    "returncode": 0
+  },
+  {
+    "label": "context-qemu",
+    "returncode": 124,
+    "markers": {
+      "[Test 1] Trap entry and breakpoint return: PASS": true,
+      "Breakpoint at": true
+    }
+  },
+  {
+    "label": "illegal-qemu",
+    "returncode": 124,
+    "markers": {
+      "[Test 2] Illegal instruction return: PASS": true,
+      "Illegal instruction at": true,
+      "Supervisor software interrupt": true,
+      "Unknown interrupt: cause 15": true,
+      "cause    0x00000014": true
+    }
+  },
+  {
+    "label": "extra-qemu",
+    "returncode": 124,
+    "markers": {
+      "EXTRA real illegal32 continuation PASS": true,
+      "EXTRA real c.ebreak16 continuation PASS": true,
+      "EXTRA real ebreak32 continuation PASS": true,
+      "EXTRA direct fallback frame/EPC unchanged PASS": true,
+      "EXTRA ALL PASS": true,
+      "cause    0x00000014": true
+    }
+  }
+]

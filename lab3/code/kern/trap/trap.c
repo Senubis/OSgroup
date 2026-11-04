@@ -82,6 +82,28 @@ void print_regs(struct pushregs *gpr) {
 
 //lab3 function2 YOUR CODE
 
+/* The interrupt handler belongs to the separate interrupt implementation. */
+void interrupt_handler(struct trapframe *tf);
+
+void exception_handler(struct trapframe *tf) {
+    switch (tf->cause) {
+        case CAUSE_ILLEGAL_INSTRUCTION:
+            cprintf("Illegal instruction at 0x%016lx\n", tf->epc);
+            /* Lab3 tests use .word 0x0000007b, a 32-bit custom opcode.
+             * This is the lab's skip policy, not general illegal-op recovery. */
+            tf->epc += 4;
+            break;
+        case CAUSE_BREAKPOINT:
+            cprintf("Breakpoint at 0x%016lx\n", tf->epc);
+            /* ebreak = 0x00100073; c.ebreak = 0x9002. Read only the
+             * first halfword so a compressed breakpoint needs no next page. */
+            tf->epc += (*(const uint16_t *)tf->epc & 3) == 3 ? 4 : 2;
+            break;
+        default:
+            print_trapframe(tf);
+            break;
+    }
+}
 
 static inline void trap_dispatch(struct trapframe *tf) {
     if ((intptr_t)tf->cause < 0) {
