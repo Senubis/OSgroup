@@ -1,7 +1,0 @@
-cwd: /mnt/e/os-labs/lab3/verification/c-exception/team-integration-20261104
-command: ['python3', '/mnt/e/os-labs/lab3/verification/c-exception/team-integration-20261104/check_direct.py']
-PASS direct illegal +4, output and other fields unchanged
-PASS direct c.ebreak +2 and ebreak +4, other fields unchanged
-PASS direct 13 fallback causes, same frame dumped once, EPC/all fields unchanged
-
-RETURN_CODE: 0
