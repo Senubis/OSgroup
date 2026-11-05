@@ -39,10 +39,10 @@ struct pushregs {
 };
 
 struct trapframe {
-    struct pushregs gpr;
+    struct pushregs gpr;//备份
     uintptr_t status;
     uintptr_t epc;
-    uintptr_t badvaddr;
+    uintptr_t badvaddr;//引发异常的访问地址/指令编码信息/0
     uintptr_t cause;
 };
 

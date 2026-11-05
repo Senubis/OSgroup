@@ -84,7 +84,7 @@ void print_regs(struct pushregs *gpr) {
 
 //lab3 function2 2413015
 
-void interrupt_handler(struct trapframe *tf) {
+void interrupt_handler(struct trapframe *tf) {//中断
     /* Clear the interrupt flag in the highest bit, retaining the cause code. */
     uintptr_t cause = tf->cause & ~((uintptr_t)1 << (sizeof(uintptr_t) * 8 - 1));
 
@@ -139,7 +139,7 @@ void interrupt_handler(struct trapframe *tf) {
     }
 }
 
-void exception_handler(struct trapframe *tf) {
+void exception_handler(struct trapframe *tf) {//异常
     switch (tf->cause) {
         case CAUSE_ILLEGAL_INSTRUCTION:
             cprintf("Illegal instruction at 0x%016lx\n", tf->epc);
