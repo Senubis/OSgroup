@@ -30,7 +30,7 @@ void idt_init(void) {
        that we are presently executing in the kernel */
     write_csr(sscratch, 0);
     /* Set the exception vector address */
-    write_csr(stvec, &__alltraps);
+    write_csr(stvec, &__alltraps);//统一处理入口
 }
 
 /* trap_in_kernel - test if trap happened in kernel */
