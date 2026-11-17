@@ -28,8 +28,13 @@ void idt_init(void) {
     extern void __alltraps(void);
     /* Set sup0 scratch register to 0, indicating to exception vector
        that we are presently executing in the kernel */
+    //约定：若中断前处于S态，sscratch为0
+    //若中断前处于U态，sscratch存储内核栈地址
+    //那么之后就可以通过sscratch的数值判断是内核态产生的中断还是用户态产生的中断
+    //我们现在是内核态所以给sscratch置零
     write_csr(sscratch, 0);
     /* Set the exception vector address */
+    //我们保证_alltraps的地址是四字节对齐的，将_alltraps这个符号的地址直接写到stvec寄存器
     write_csr(stvec, &__alltraps);//统一处理入口
 }
 
