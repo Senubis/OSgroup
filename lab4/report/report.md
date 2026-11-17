@@ -13,20 +13,22 @@
 | 成员 | 负责的练习/模块 |
 |------|----------------|
 | 2411356-华轩宁 | 功能模块一：虚拟内存页操作 |
-| | |
-| | |
+| 2412979-单馨淼 | 功能模块二：进程创建及初始化 |
+| 2413015-孙若晴 | 功能模块三：进程调度与上下文切换 |
 
 
 ---
 
 ## 一、实验目的
 
-虚拟内存页操作部分的实验目的如下。
+本阶段完成虚拟内存页操作与内核进程创建，实验目的如下。
 
 1. 理解 Sv39 多级页表如何建立虚拟页与物理页之间的映射关系。
 2. 实现页映射的建立、替换、权限更新和撤销，维护页表项与物理页引用计数的一致性。
 3. 理解 TLB（处理器缓存的地址翻译结果）与页表的关系，掌握映射变化后进行缓存失效处理的必要性。
-4. 通过 AI 辅助实现与实际测试，区分软件逻辑检查、真实地址访问和整组运行验证。
+4. 理解进程控制块、内核栈、trapframe 和 context 在内核线程创建过程中的作用。
+5. 实现 idleproc 与 initproc 的初始化，建立新内核线程第一次运行所需的寄存器和栈状态。
+6. 通过 WSL 编译与 QEMU 运行检查进程创建结果。
 
 ---
 
@@ -35,7 +37,7 @@
 | 成员 | AI 编程工具 | 底层模型 | 备注 |
 |------|------------|---------|------|
 | 2411356-华轩宁 | Codex | GPT6.1-Sol | AI 协助源码分析、代码实现、验证脚本及报告整理 |
-| | | | |
+| 2412979-单馨淼 | Codex | GPT6.1-Sol | AI 协助进程创建代码分析、实现、WSL/QEMU 验证及报告整理 |
 | | | | |
 
 
@@ -51,7 +53,7 @@
 ### 3.2 功能的逐步实现
 
 1. **A：虚拟内存页操作。** 先核对已有页表查询、物理页分配和引用计数接口，再实现插入与删除映射，最后分别检查软件页表状态和真实访问路径。
-2. **B：进程创建及初始化。**
+2. **B：进程创建及初始化。** 初始化进程控制块和全局进程表，创建 idleproc 与 initproc，并为 initproc 准备首次运行所需的内核栈、trapframe 和 context。
 
 3. **C：进程调度与上下文切换。**
 
@@ -170,21 +172,64 @@ Post-Condition：交付实现、实际验证记录、报告材料和交接说明
 
 中间页表项的相关规则见 [RISC-V 官方特权级规范](https://docs.riscv.org/reference/isa/priv/supervisor.html)。
 
-**当前进度：** 功能模块一 的映射和引用计数逻辑通过主机侧检查，QEMU 已通过分配器检查和 `check_pgdir()`。后续需处理页表 U 位问题，并在 B、C 完成后进行完整构建和评分。
+**当前进度：** 功能模块一 的映射和引用计数逻辑通过主机侧检查，QEMU 已通过分配器检查和 `check_pgdir()`。功能模块二已完成，功能模块三完成后再进行完整调度与整组评分。
 
 ### 功能模块二：进程创建及初始化
 
-**负责人：**
+**负责人：** 2412979-单馨淼
 
 #### 模块功能描述
 
+本模块在 `kern/process/proc.c` 中实现以下函数：
+
+```c
+static struct proc_struct *alloc_proc(void);
+static int copy_mm(uint32_t clone_flags, struct proc_struct *proc);
+static void copy_thread(struct proc_struct *proc, uintptr_t esp,
+                        struct trapframe *tf);
+int kernel_thread(int (*fn)(void *), void *arg, uint32_t clone_flags);
+int do_fork(uint32_t clone_flags, uintptr_t stack, struct trapframe *tf);
+void proc_init(void);
+```
+
+`alloc_proc()` 初始化进程控制块的状态、PID、内核栈、地址空间、上下文和链表节点。`proc_init()` 初始化进程链表与 PID 哈希表，建立 pid 为 0 的 idleproc，再通过 `kernel_thread()` 和 `do_fork()` 创建 pid 为 1 的 initproc。
+
+`kernel_thread()` 把线程函数和参数放入 `s0`、`s1`，把首次执行地址设为 `kernel_thread_entry`。`copy_thread()` 把 trapframe 放在新内核栈顶部，令 `context.ra` 指向 `forkret`、`context.sp` 指向 trapframe。调度到新线程后，执行路径为 `forkret -> forkrets -> __trapret -> kernel_thread_entry -> init_main`。
+
+`do_fork()` 依次分配进程控制块和内核栈，处理地址空间，复制线程现场，分配 PID，加入进程链表及哈希表，最后把子进程设为可运行。分配失败时按已取得资源的逆序释放。Lab4 当前只创建内核线程，因此 `copy_mm()` 检查当前进程没有用户地址空间后返回。
+
 #### 最终提示词
+
+```text
+[PROMPT]
+完成 uCore RISC-V Lab4 功能模块二“进程创建及初始化”，只修改指导书要求的 proc.c 练习二区域，不实现练习三。
+
+[RELY]
+先核对 proc_struct、trapframe、context、kernel_thread_entry、forkret、forkrets、__trapret、进程链表、PID 哈希表、内核栈分配和课程测试断言。沿用已完成的功能模块一及 Lab2/Lab3 前置代码。
+
+[GUARANTEE]
+初始化 PCB 的全部字段；建立 idleproc 和 initproc；保持新线程首次运行链路与 RISC-V sret 恢复规则一致；do_fork 失败时释放已经分配的资源；不实现 cpu_idle、proc_run 或其他练习三内容；不 push。
+
+[SPECIFICATION]
+alloc_proc 返回 PROC_UNINIT、pid=-1 且上下文清零的 PCB。
+kernel_thread 把函数、参数、状态寄存器和入口地址写入临时 trapframe。
+copy_thread 把 trapframe 放到内核栈顶，子进程 a0 为 0；传入栈为 0 时，恢复后的 sp 指向该 trapframe。
+do_fork 完成父子关系、内核栈、地址空间、现场、PID、链表、哈希表和 RUNNABLE 状态设置。
+proc_init 建立 pid=0 的 idleproc 与 pid=1 的 initproc。
+在 WSL 中编译，并在不修改正式练习三代码的临时副本中运行课程进程创建断言。
+```
 
 #### 实现迭代过程
 
+首先对照指导书、本地 `lab4` 目录和 GitHub 最新代码。最新代码已完成功能模块一，`proc.c` 中功能模块二和功能模块三仍为占位区。本地与 GitHub 最新 `proc.c` 的有效内容一致，因此同一份练习二实现写入两处，运行验证使用包含功能模块一成果的 GitHub 最新代码副本。
+
+实现时先初始化 PCB，再完成 `kernel_thread()`、`copy_thread()` 和 `do_fork()`。其中 `copy_thread()` 对内核线程的空栈参数进行转换，使恢复后的 `sp` 指向新线程内核栈中的 trapframe。PID 分配和链表插入放在关中断区间，插入完成后调用 `wakeup_proc()`。
+
+WSL 全量重编时，所有 C/汇编文件均生成目标文件，最终链接只报告 `cpu_idle` 未定义。`cpu_idle` 属于功能模块三，本批没有写入正式代码。随后在临时副本中加入不参与调度的 `cpu_idle` 验证桩和课程 `Process Create` 断言。临时内核构建成功，QEMU 输出 `[Test Lab4] Process Create PASS`，之后继续响应时钟中断。验证完成后删除临时副本。
+
 ### 功能模块三：进程调度与上下文切换
 
-**负责人：**
+**负责人：** 2413015-孙若晴
 
 #### 模块功能描述
 
@@ -210,7 +255,7 @@ Post-Condition：交付实现、实际验证记录、报告材料和交接说明
 
 | 检查 | 已有结果 | 结果范围 |
 |------|----------|----------|
-| 正式工程 `make -j2` | 源文件编译通过，最终链接失败 | 待补齐 B/C 的 `proc_init`、`cpu_idle` |
+| 正式工程 `make -j2` | 全部源文件编译通过，最终链接失败 | 仅剩功能模块三的 `cpu_idle` 未定义 |
 | 原 `make grade`，独立源码副本 | 注入阶段停止 | 缺少 `proc_init()`，无正式评分结果 |
 | 主机侧 `check_pgdir()` | 通过 | 地址转换、分配器及 TLB 使用测试替身 |
 | 主机侧课程 PMM 测试 | 输出 `[Test PMM] PASS` | 在主机替身环境中运行课程 PMM 测试逻辑 |
@@ -218,6 +263,17 @@ Post-Condition：交付实现、实际验证记录、报告材料和交接说明
 | QEMU 测试副本 | 分配器检查、`check_pgdir()` 通过 | 真实迁入分配器；入口绕开 B/C；后续低地址写入缺页 |
 | QEMU 独立诊断副本 | 清除中间项 U 位后，后续内存检查通过 | 含诊断专用异常处理，未迁入正式工程 |
 | 完整线程启动、调度和整组评分 | 未完成 | 待其他模块及框架问题处理后统一验证 |
+
+### 功能模块二 部分验证
+
+| 检查 | 结果 | 结果范围 |
+|------|------|----------|
+| `git diff --check -- lab4/code/kern/process/proc.c` | 通过 | 练习二源码无空白错误 |
+| WSL 全量重编 | `proc.c` 编译通过 | 正式链接仅受未实现的 `cpu_idle` 阻塞 |
+| 临时验证内核构建 | 通过 | 仅加入不调度的 `cpu_idle` 验证桩 |
+| QEMU 进程创建断言 | `[Test Lab4] Process Create PASS` | 检查 idleproc、initproc、父子关系、状态、内核栈和 context |
+
+临时验证没有调用调度器，也没有运行 initproc，因此不构成功能模块三的验证。功能模块三完成后再检查 `forkret -> forkrets -> __trapret` 的实际切换与 initproc 输出。
 
 **后续测试：** 在正式工程中验证真实 TLB 刷新效果、已有缓存时的映射替换、撤销后的访问异常及低内存分配失败路径；其他模块完成后进行线程联调和整组评分。多核地址翻译同步尚未测试。
 
@@ -248,7 +304,16 @@ Post-Condition：交付实现、实际验证记录、报告材料和交接说明
 
 按需分页、页面置换与交换、写时复制、完整用户地址空间管理和多核 TLB 同步，是虚拟内存管理中进一步需要学习的内容。本次 功能模块一 集中完成基础页映射操作，线程创建、调度和上下文切换由其他模块补充。
 
-#### 其他成员补充
+#### 功能模块二 部分对应的知识点
+
+| 实验中的内容 | 对应的 OS 原理 | 本次实现 |
+|--------------|---------------|----------|
+| `proc_struct` 初始化 | 进程控制块 | 保存状态、PID、内核栈、地址空间和切换现场 |
+| `do_fork()` | 进程创建与资源管理 | 按顺序取得资源，失败时逆序回收 |
+| trapframe 与 context | 首次运行和上下文切换 | context 进入 `forkret`，trapframe 恢复完整寄存器现场 |
+| idleproc 与 initproc | 内核启动阶段的基础进程 | 建立 pid 0 与 pid 1，并把 initproc 置为可运行 |
+
+功能模块二的关键是同时准备管理状态和执行现场。进程链表、PID 与父子关系描述“它是谁”，内核栈、trapframe 和 context 决定“它第一次从哪里开始执行”。
 
 ### AI 协作开发的经验
 
@@ -260,5 +325,7 @@ Post-Condition：交付实现、实际验证记录、报告材料和交接说明
 
 AI 协助完成了代码实现、前置代码整合、测试脚本和报告整理。协作过程中，清晰的函数约定和具体的测试输出有助于检查生成代码、定位问题，并把实现过程整理成可复查的实验记录。
 
-#### 其他成员补充
+#### 功能模块二 部分
+
+实现前先沿 `switch_to`、`forkret`、`forkrets`、`__trapret` 和 `kernel_thread_entry` 追踪首次运行路径，再确定各寄存器字段，避免只按函数名填空。验证时将正式构建和临时运行检查分开：正式工程保留练习三占位，临时副本只用于解除链接阻塞并执行练习二断言。
 
