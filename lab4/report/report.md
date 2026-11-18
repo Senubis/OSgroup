@@ -38,7 +38,7 @@
 |------|------------|---------|------|
 | 2411356-华轩宁 | Codex | GPT6.1-Sol | AI 协助源码分析、代码实现、验证脚本及报告整理 |
 | 2412979-单馨淼 | Codex | GPT6.1-Sol | AI 协助进程创建代码分析、实现、WSL/QEMU 验证及报告整理 |
-| | | | |
+| 2413015-孙若晴 | Codex | GPT6.2-Sol | AI 协助调度实现、QEMU/GDB 验证、启动缺页排查及报告整理 |
 
 
 
@@ -55,7 +55,7 @@
 1. **A：虚拟内存页操作。** 先核对已有页表查询、物理页分配和引用计数接口，再实现插入与删除映射，最后分别检查软件页表状态和真实访问路径。
 2. **B：进程创建及初始化。** 初始化进程控制块和全局进程表，创建 idleproc 与 initproc，并为 initproc 准备首次运行所需的内核栈、trapframe 和 context。
 
-3. **C：进程调度与上下文切换。**
+3. **C：进程调度与上下文切换。** 在本地中断保护下选出可运行线程，更新当前进程和页表，最后恢复目标线程的寄存器上下文，使 `initproc` 从 `idleproc` 接过 CPU。
 
 ---
 
@@ -233,9 +233,59 @@ WSL 全量重编时，所有 C/汇编文件均生成目标文件，最终链接�
 
 #### 模块功能描述
 
+本模块将处理器从 `idleproc` 切换到已经创建的 `initproc`，并使新线程进入 `init_main()`。四个接口分布在以下三个文件中。
+
+| 文件 | 接口 | 实现内容 |
+|------|------|----------|
+| `kern/process/proc.c` | `cpu_idle()` | 持续检查 `current->need_resched`，有调度请求时调用 `schedule()`。 |
+| `kern/schedule/sched.c` | `schedule()` | 在关闭本地中断后清除当前线程的调度请求，循环查找首个 `PROC_RUNNABLE` 线程，跳过链表头。`idleproc` 的链表节点自环，调度从表头开始。没有可运行线程时选中 `idleproc`，选中后增加 `runs`，目标变化时调用 `proc_run()`。 |
+| `kern/process/proc.c` | `proc_run()` | 目标与 `current` 相同时直接返回。切换时在同一个本地中断临界区内更新 `current`、把目标根页表的物理页号写入 Sv39 `satp`、刷新 TLB，并调用 `switch_to()`。原线程恢复执行后恢复其进入临界区前的中断状态。 |
+| `kern/process/switch.S` | `switch_to()` | 按 `struct context` 的 RV64 字段顺序保存和恢复 `ra`、`sp` 与 `s0`–`s11`。`ret` 跳到目标上下文的返回地址。 |
+
+首次运行时，`copy_thread()` 已经为 `initproc` 设置好 `context.ra`、`context.sp` 和 trapframe。实际执行路径为 `cpu_idle → schedule → proc_run → switch_to → forkret → forkrets → __trapret → kernel_thread_entry → init_main`。曾经运行过的线程从先前保存的返回地址继续执行。
+
 #### 最终提示词
 
+```text
+[PROMPT]
+完成 RISC-V uCore 模块三「进程调度」，让 initproc 从 idleproc 接过 CPU。
+
+直接在项目中补全 kern/process/proc.c 的 cpu_idle()、proc_run()，kern/schedule/sched.c 的 schedule()，以及 kern/process/switch.s 的 switch_to()。文件名以仓库为准，保留现有接口和其他逻辑。完成后用工程已有的构建和 QEMU 目标验证，报告实际结果。
+
+[RELY]
+以源码为准，核对 proc.h 中的进程字段及 context 布局。复用 proc_list、current、idleproc、PROC_RUNNABLE、链表接口和本地中断接口。参照 pmm.c 的 enable_paging() 写入 Sv39 satp，并使用工程的 TLB 刷新接口。首次运行复用 forkret → forkrets → __trapret。
+
+[GUARANTEE]
+void cpu_idle(void);
+void schedule(void);
+void proc_run(struct proc_struct *proc);
+void switch_to(struct context *from, struct context *to);
+
+[SPECIFICATION]
+cpu_idle()
+- Pre-Condition：初始化完成，current 为 idleproc。
+- Post-Condition：持续检查 need_resched，置位时调用 schedule()。
+
+schedule()
+- Pre-Condition：当前线程和进程链表已初始化。
+- Post-Condition：清除当前线程的 need_resched，循环选择下一个 PROC_RUNNABLE 线程，无候选时选 idleproc。增加选中线程的 runs，仅在目标变化时切换。
+- Requirements：选择和切换在本地关中断期间完成，返回时恢复原中断状态。
+
+proc_run()
+- Pre-Condition：目标线程可运行，页表和上下文已准备好。
+- Post-Condition：目标等于 current 时直接返回。否则在本地关中断期间更新 current、切换 Sv39 页表、刷新 TLB 并调用 switch_to()。原线程恢复执行后恢复原中断状态。
+
+switch_to()
+- Pre-Condition：from 可写，to 已初始化或保存过。
+- Post-Condition：按 struct context 的实际偏移保存和恢复 ra、sp、s0–s11，通过 ret 进入目标线程的首次入口或恢复原执行位置。
+```
+
 #### 实现迭代过程
+
+1. 对照接口并实现切换。 从 `proc_init()` 和 `copy_thread()` 核对 `idleproc` 的调度标志、进程链表约定和 `initproc` 首次运行的入口。按 `struct context` 的字段布局写入汇编保存与恢复指令，再接入 `proc_run()`、`schedule()` 和 `cpu_idle()`。临时副本使用 `make` 成功编译。
+2. 诊断首次启动缺页。 首次 `make qemu` 在 `check_boot_pgdir()` 写入虚拟地址 `0x100` 时触发存储缺页。结合模块一已有记录，在 QEMU 调试运行中观察到两级非叶子项的 `U` 位均为 1。在 GDB 中临时清除这两个位后，断点依次到达 `cpu_idle()`、`switch_to()`、`forkret()`、`__trapret` 和 `init_main()`，并确认切换时 `current` 已指向 PID 1，且本地中断关闭。
+3. 修复框架中的非叶子项编码。 在 `kern/mm/pmm.c` 中将 `get_pte()` 的两处非叶子项创建改为调用现有 `ptd_create()`，并将 `check_pgdir()` 中的一处断言改为检查根页表项的 `U` 位为 0。改动共三行。直接运行 `make qemu` 后，内存自检通过，`initproc` 打印 `Hello world!!`。 
+4. 确认线程主体返回后的行为。 核对原始工程和评分脚本后确认，`init_main()` 返回后经 `kernel_thread_entry` 调用 `do_exit()` 并出现 `process exit!!` 是 Lab 4 的预期行为。保留框架中的 `do_exit()`。 
 
 ### Challenge 1：中断状态的保存与恢复
 
@@ -280,6 +330,31 @@ WSL 全量重编时，所有 C/汇编文件均生成目标文件，最终链接�
 
 ### 其他模块及整组验证
 
+在模块三合入并修复启动缺页后，通过 WSL 在原工程目录运行 `make qemu` 和 `make grade`。以下是正式联调结果。
+
+`make qemu` 无需 GDB，内存自检通过，`initproc` 进入 `init_main()`。串口输出节选如下。
+
+```text
+check_pgdir() succeeded!
+check_boot_pgdir() succeeded!
+this initproc, pid = 1, name = "init"
+To U: "Hello world!!".
+To U: "en.., Bye, Bye. :)"
+kernel panic at kern/process/proc.c:208:
+    process exit!!.
+```
+
+`make grade` 退出码为 0。调度用例创建两个测试内核线程，让它们主动调用 `schedule()`，并检查两个线程均获得过 CPU。
+
+| 评分项 | 结果 | 得分 |
+|--------|------|------|
+| `check PMM` | `OK` | 10/10 |
+| `check Process Create` | `OK` | 10/10 |
+| `check Schedule` | `OK` | 10/10 |
+| **总分** | **全部通过** | **30/30** |
+
+评分脚本注入的测试线程返回类型为 `void`，与 `kernel_thread()` 要求的 `int` 不一致。编译时出现函数指针类型警告，评分正常完成。
+
 **测试截图：**
 
 ---
@@ -315,6 +390,15 @@ WSL 全量重编时，所有 C/汇编文件均生成目标文件，最终链接�
 
 功能模块二的关键是同时准备管理状态和执行现场。进程链表、PID 与父子关系描述“它是谁”，内核栈、trapframe 和 context 决定“它第一次从哪里开始执行”。
 
+#### 功能模块三 部分对应的知识点
+
+| 实验中的内容 | 对应的 OS 原理 | 本次实现 |
+|--------------|---------------|----------|
+| `schedule()` 扫描 `proc_list` | 就绪线程选择 | 从当前线程之后循环查找，所有普通线程均不可运行时选择 `idleproc`。 |
+| `local_intr_save()` 与 `local_intr_restore()` | 单核临界区 | 避免切换期间被本地中断打断，使进程指针、地址空间和执行现场同步交接。 |
+| `satp` 与 `flush_tlb()` | 地址空间切换 | 先设置目标线程的根页表，再刷新地址转换缓存。 |
+| `switch_to()` 与 `__trapret` | 上下文与 trapframe | `switch_to()` 恢复内核调用上下文。新线程随后通过 trapframe 恢复首次执行所需的现场。 |
+
 ### AI 协作开发的经验
 
 #### 功能模块一 部分
@@ -328,4 +412,10 @@ AI 协助完成了代码实现、前置代码整合、测试脚本和报告整�
 #### 功能模块二 部分
 
 实现前先沿 `switch_to`、`forkret`、`forkrets`、`__trapret` 和 `kernel_thread_entry` 追踪首次运行路径，再确定各寄存器字段，避免只按函数名填空。验证时将正式构建和临时运行检查分开：正式工程保留练习三占位，临时副本只用于解除链接阻塞并执行练习二断言。
+
+#### 功能模块三 部分
+
+先用四段式提示词明确接口、依赖、状态变化和验证方式，再对照源码确认链表哨兵、`struct context` 的字段偏移以及 `pgdir` 的地址含义。把这些约定写进提示词，可以减少 C 与汇编之间的接口错误。
+
+初次运行受内存自检缺页阻塞时，先用 QEMU 异常日志定位访问地址，再通过 GDB 验证单独清除两级非叶子项的 `U` 位能否继续启动。修复后复跑普通启动和评分，分别确认线程主体输出与调度用例通过。
 
