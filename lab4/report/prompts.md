@@ -330,3 +330,64 @@ Post-Condition：
 
 验证结果：
 - 主机侧隔离测试通过：原有页表/PMM 断言，以及重复映射、权限更新、替换、删除和两级分配失败检查。
+
+# Lab4 模块二 AI 辅助学习与实验记录
+
+负责人：2412979-单馨淼
+实验内容：进程创建及初始化
+
+# 用户提问 1
+
+请先检查本地文件夹中的 Lab4、实验指导书和 GitHub 仓库中的 Lab4。先不要实现，先确认两个目录的关系、Lab2/Lab3 前置内容是否齐全，并把 Lab4 分成三份工作量接近的任务。Challenge 后续也要完成。实验指导书没有明确要求的内容不要做，优先使用 WSL。
+
+# AI 回答 1
+
+检查后确认，本地目录保存原始 Lab4 工程，GitHub 仓库中的 `lab4/code` 是小组当前整合版本。三个功能模块分别是虚拟内存页操作、进程创建及初始化、进程调度与上下文切换。Challenge 在三个功能模块完成后共同处理。
+
+# 用户提问 2
+
+GitHub 仓库里应该已经完成了一部分。实验书里有三个练习，检查是不是已经完成一个，并先把本地内容和仓库内容集成起来。
+
+# AI 回答 2
+
+GitHub 最新代码已经完成功能模块一；`kern/process/proc.c` 的功能模块二、功能模块三仍是占位区。仓库版本包含 Lab2 的物理内存管理和 Lab3 的中断、寄存器恢复前置内容。后续实现同步到本地工程和仓库副本，验证以仓库副本为准。
+
+# 用户提问 3
+
+现在完成练习二。只做进程创建及初始化，不完成练习三，不 push。完成后补充实验报告。
+
+# AI 回答 3
+
+练习二需要实现 `alloc_proc()`、`proc_init()`、`kernel_thread()`、`do_fork()`、`copy_thread()` 和 `copy_mm()`。实现前沿 `switch_to -> forkret -> forkrets -> __trapret -> kernel_thread_entry` 检查首次运行路径，再完成 PCB、内核栈、trapframe、context、PID、链表和哈希表的初始化。
+
+# 用户提问 4
+
+```text
+[PROMPT]
+完成 uCore RISC-V Lab4 功能模块二“进程创建及初始化”，只修改指导书要求的 proc.c 练习二区域，不实现练习三。
+
+[RELY]
+先核对 proc_struct、trapframe、context、kernel_thread_entry、forkret、forkrets、__trapret、进程链表、PID 哈希表、内核栈分配和课程测试断言。沿用已完成的功能模块一及 Lab2/Lab3 前置代码。
+
+[GUARANTEE]
+初始化 PCB 的全部字段；建立 idleproc 和 initproc；保持新线程首次运行链路与 RISC-V sret 恢复规则一致；do_fork 失败时释放已经分配的资源；不实现 cpu_idle、proc_run 或其他练习三内容；不 push。
+
+[SPECIFICATION]
+alloc_proc 返回 PROC_UNINIT、pid=-1 且上下文清零的 PCB。
+kernel_thread 把函数、参数、状态寄存器和入口地址写入临时 trapframe。
+copy_thread 把 trapframe 放到内核栈顶，子进程 a0 为 0；传入栈为 0 时，恢复后的 sp 指向该 trapframe。
+do_fork 完成父子关系、内核栈、地址空间、现场、PID、链表、哈希表和 RUNNABLE 状态设置。
+proc_init 建立 pid=0 的 idleproc 与 pid=1 的 initproc。
+在 WSL 中编译，并在不修改正式练习三代码的临时副本中运行课程进程创建断言。
+```
+
+# AI 回答 4
+
+已完成 Lab4 功能模块二“进程创建及初始化”。
+
+- 在 `kern/process/proc.c` 中实现六个练习二函数。
+- 同一实现已写入本地 Lab4 和 GitHub 最新代码副本。
+- WSL 全量编译时，全部 C/汇编文件编译通过；当时正式链接只剩功能模块三的 `cpu_idle` 未定义。
+- 临时验证内核构建成功，QEMU 输出 `[Test Lab4] Process Create PASS`。
+- 临时验证副本已删除，正式源码没有加入练习三验证桩。
+- 实验报告已补充功能模块二的实现、首次运行路径和验证记录。
